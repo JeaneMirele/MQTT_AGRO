@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #67b94e; color: #cdd6f4; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .dashboard { background: #3eb626; padding: 40px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); text-align: center; width: 350px; }
+        h2 { margin-top: 0; color: #a6e3a1; }
+        .metric { font-size: 20px; margin: 25px 0; padding: 15px; background: #4e868d; border-radius: 8px; }
+        span { font-weight: bold; color: #89b4fa; font-size: 24px; }
+        .alerta { color: #f38ba8; font-size: 18px; font-weight: bold; display: none; margin-top: 20px; border: 2px solid #f38ba8; padding: 10px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h2>Fazenda Inteligente</h2>
+        <div class="metric">Temperatura: <br><span id="temp">--</span> °C</div>
+        <div class="metric">Umidade do Solo: <br><span id="umidade">--</span> %</div>
+        <div class="alerta" id="alerta">⚠️ Irrigador Ativado!</div>
+    </div>
+
+    <script>
+        async function buscarDados() {
+            const response = await fetch('/api/dados');
+            const dados = await response.json();
+            
+            document.getElementById('temp').innerText = dados.temperatura;
+            document.getElementById('umidade').innerText = dados.umidade_solo;
+            
+            const alerta = document.getElementById('alerta');
+            if (dados.umidade_solo !== "--" && parseFloat(dados.umidade_solo) < 30.0) {
+                alerta.style.display = "block";
+            } else {
+                alerta.style.display = "none";
+            }
+        }
+
+        setInterval(buscarDados, 2000);
+    </script>
+</body>
+</html>
